@@ -111,8 +111,8 @@ should not happen).\<close>
 definition update_var :: "var_context \<Rightarrow> 'a nstate \<Rightarrow> vname \<Rightarrow> 'a val \<Rightarrow>  'a nstate"
   where 
    "update_var \<Lambda> n_s x v =
-            (case (map_of (snd \<Lambda>) x) of Some res \<Rightarrow> n_s\<lparr>local_state := local_state(n_s)(x \<mapsto> v)\<rparr>  |
-                                 None \<Rightarrow> n_s\<lparr>global_state := global_state(n_s)(x \<mapsto> v) \<rparr>)"
+            (case (map_of (snd \<Lambda>) x) of Some res \<Rightarrow> n_s\<lparr>local_state := (local_state(n_s))(x \<mapsto> v) \<rparr>  |
+                                 None \<Rightarrow> n_s\<lparr>global_state := (global_state(n_s))(x \<mapsto> v) \<rparr>)"
 
 definition update_var_opt :: "var_context \<Rightarrow> 'a nstate \<Rightarrow> vname \<Rightarrow> 'a val option \<Rightarrow>  'a nstate"
   where 
