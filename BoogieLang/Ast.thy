@@ -121,26 +121,13 @@ inductive red_bigblock :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Righ
         \<Longrightarrow> A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> \<langle>((BigBlock bb_name []
                                 (Some (ParsedIf bb_guard thenbigblocks (else_hd # else_bbs))) None), cont0, Normal n_s)\<rangle> \<longrightarrow>
                             (else_hd, (convert_list_to_cont ( else_bbs) cont0), Normal n_s)"
-  (*
-  | RedParsedIfFalseNoElseBranchSeq: 
-    "\<lbrakk>\<And>b. bb_guard = (Some b) \<Longrightarrow>  A,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>b, n_s\<rangle> \<Down> LitV (LBool False) \<rbrakk> 
-        \<Longrightarrow> A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> \<langle>((BigBlock bb_name []
-                                (Some (ParsedIf bb_guard thenbigblocks [])) None), KSeq pr cont_pr, Normal n_s)\<rangle> \<longrightarrow>
-                            (pr, cont_pr, Normal n_s)"
-
-  | RedParsedIfFalseNoElseBranchStop: 
-    "\<lbrakk>\<And>b. bb_guard = (Some b) \<Longrightarrow>  A,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>b, n_s\<rangle> \<Down> LitV (LBool False) \<rbrakk> 
-        \<Longrightarrow> A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> \<langle>((BigBlock bb_name []
-                                (Some (ParsedIf bb_guard thenbigblocks [])) None), KStop, Normal n_s)\<rangle> \<longrightarrow>
-                            (BigBlock bb_name [] None None, KStop, Normal n_s)"
-  *)
 
   | RedParsedWhileWrapper: 
     "A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> 
       \<langle>((BigBlock bb_name [] 
-              (Some (WhileWrapper (ParsedWhile bb_guard bb_invariants (bb_hd # body_bbs)))) None), cont0,  Normal n_s)\<rangle> \<longrightarrow>
+              (Some (WhileWrapper str)) None), cont0,  Normal n_s)\<rangle> \<longrightarrow>
         ((BigBlock bb_name [] 
-                (Some (ParsedWhile bb_guard bb_invariants (bb_hd # body_bbs))) None), (KEndBlock cont0),  Normal n_s)"
+                (Some str) None), (KEndBlock cont0),  Normal n_s)"
  
   | RedParsedWhile_InvFail: 
     "\<lbrakk>\<And> b. bb_guard = (Some b) \<Longrightarrow> A,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>b, n_s\<rangle> \<Down> LitV (LBool True); 
