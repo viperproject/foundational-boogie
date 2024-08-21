@@ -308,6 +308,12 @@ next
     by simp
 qed
 
+lemma hybrid_block_lemma_loop_eq_loop_heads:
+  assumes "hybrid_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G  G' succ tgt_block tgt_cmds_0 lsLoopHeads1 posts"
+      and "lsLoopHeads1 = lsLoopHeads2"
+    shows "hybrid_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G  G' succ tgt_block tgt_cmds_0 lsLoopHeads2 posts"
+  using assms
+  by simp
 
 subsection \<open>Main Lemmas for Loops\<close>
 
