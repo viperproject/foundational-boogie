@@ -4,7 +4,7 @@ Moreover, it contains helper theory files to support the [validation of the Boog
 verifier](https://github.com/gauravpartha/boogie_proofgen/), which is currently being
 developed.
 
-The theory files are compatible with Isabelle 2021 (but not backwards 
+The theory files are compatible with Isabelle 2022 (and not backwards 
 compatible with older versions).
 
 ## More details on the theory files
@@ -15,7 +15,8 @@ The theory files for the Boogie language itself are given by:
 * `Lang.thy`: Syntax of the Boogie language
 * `BoogieDeBruijn.thy`: Some formalization on DeBruijn binders
 * `Semantics.thy`: Semantics of the Boogie language and definition of procedure 
-correctness
+correctness (only describes control-flow graphs in terms of control flow)
+* `Ast.thy`: Semantics of Boogie AST (uses `Semantics.thy` for control flow independent elements)
 * `Util.thy`: Some helper lemmas
 * `Typing.thy`: Boogie's type system
 * `TypeSafety.thy`: Type safety proof for expressions
@@ -34,6 +35,8 @@ the passification source CFG is correct under the assumption of the VC.
 * `PassificationML.thy`: Some ML tactics used in the certification of the 
 passification phase.
 * `BackedgeElim.thy`: Main theory that helps deal with the certification of the CFG-to-DAG phase.
+* `CFGOptimizationsLoop.thy`: Main theory that helps deal with the certification of the CFG optimizations phase.
+* `Ast_to_Cfg_Validation.thy`: Main theory that helps deal with the certification of the AST-to-CFG phase.
 * `TypingHelper.thy`: Helper lemmas/definitions for proving that expressions are well-typed.
 * `TypingML.thy`: ML tactic to prove that an expression is well-typed.
 
