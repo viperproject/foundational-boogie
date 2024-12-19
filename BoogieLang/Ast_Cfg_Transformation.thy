@@ -462,7 +462,7 @@ lemma guard_fails_push_through_assumption:
 lemma guard_fails_push_through_assumption2: 
   assumes block_correctness: "reached_state \<noteq> Failure \<and> (\<forall> ns1'. reached_state = Normal ns1' \<longrightarrow> (red_cmd_list A M \<Lambda> \<Gamma> \<Omega> (c#cs2) (Normal ns1) (Normal ns1')))"
       and assume_cmd: "c = Assume not_guard"
-      and "UnOp Not guard \<sim> not_guard"
+      and "UnOp Not guard \<sim> not_guard" \<comment>\<open>not required for lemma, but makes lemma in sync with analogous lemma above\<close>
       and guard_fails: "A,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>guard, ns1\<rangle> \<Down> LitV (LBool False)"
      shows "reached_state \<noteq> Failure \<and> (\<forall> ns1'. reached_state = Normal ns1' \<longrightarrow> (red_cmd_list A M \<Lambda> \<Gamma> \<Omega> (cs2) (Normal ns1) (Normal ns1')))" 
      using assume_cmd assume_true_cmds block_correctness by blast
