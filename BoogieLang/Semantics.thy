@@ -111,8 +111,8 @@ should not happen).\<close>
 definition update_var :: "var_context \<Rightarrow> 'a nstate \<Rightarrow> vname \<Rightarrow> 'a val \<Rightarrow>  'a nstate"
   where 
    "update_var \<Lambda> n_s x v =
-            (case (map_of (snd \<Lambda>) x) of Some res \<Rightarrow> n_s\<lparr>local_state := local_state(n_s)(x \<mapsto> v)\<rparr>  |
-                                 None \<Rightarrow> n_s\<lparr>global_state := global_state(n_s)(x \<mapsto> v) \<rparr>)"
+            (case (map_of (snd \<Lambda>) x) of Some res \<Rightarrow> n_s\<lparr>local_state := (local_state(n_s))(x \<mapsto> v) \<rparr>  |
+                                 None \<Rightarrow> n_s\<lparr>global_state := (global_state(n_s))(x \<mapsto> v) \<rparr>)"
 
 definition update_var_opt :: "var_context \<Rightarrow> 'a nstate \<Rightarrow> vname \<Rightarrow> 'a val option \<Rightarrow>  'a nstate"
   where 
@@ -414,7 +414,7 @@ fun instantiate :: "rtype_env \<Rightarrow> ty \<Rightarrow> ty"
 lemma instantiate_nil [simp]: "instantiate [] \<tau> = \<tau>"
   by (induction \<tau>) (simp_all add: map_idI)
 
-type_synonym proc_context = "pdecl list"
+type_synonym 'struct_ty proc_context = "'struct_ty pdecl list"
 
 subsection \<open>Expression reduction (big-step semantics)\<close>
 
@@ -520,9 +520,9 @@ definition where_clauses_all_sat_context :: "'a absval_ty_fun \<Rightarrow> var_
 
 subsection \<open>Command reduction (big-step semantics)\<close>
 
-inductive red_cmd :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd \<Rightarrow> 'a state \<Rightarrow> 'a state \<Rightarrow> bool"
+inductive red_cmd :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd \<Rightarrow> 'a state \<Rightarrow> 'a state \<Rightarrow> bool"
   ("_,_,_,_,_ \<turnstile> ((\<langle>_,_\<rangle>) \<rightarrow>/ _)" [51,51,0,0,0] 81)
-  for A :: "'a absval_ty_fun" and M :: proc_context and \<Lambda> :: var_context and  \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env
+  for A :: "'a absval_ty_fun" and M :: "'m proc_context" and \<Lambda> :: var_context and  \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env
   where
     RedAssertOk: "\<lbrakk> A,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>e, n_s\<rangle> \<Down> LitV (LBool True) \<rbrakk> \<Longrightarrow> 
                  A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>Assert e, Normal n_s\<rangle> \<rightarrow> Normal n_s"
@@ -574,9 +574,9 @@ inductive_cases RedHavoc_case: "A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<l
 
 text \<open>Command list reduction (big-step semantics)\<close>
 
-inductive red_cmd_list :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd list \<Rightarrow> 'a state \<Rightarrow> 'a state \<Rightarrow> bool"
+inductive red_cmd_list :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd list \<Rightarrow> 'a state \<Rightarrow> 'a state \<Rightarrow> bool"
   ("_,_,_,_,_ \<turnstile> ((\<langle>_,_\<rangle>) [\<rightarrow>]/ _)" [51,0,0,0] 81)
-  for A :: "'a absval_ty_fun" and M :: proc_context and \<Lambda> :: var_context and \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env
+  for A :: "'a absval_ty_fun" and M :: "'m proc_context" and \<Lambda> :: var_context and \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env
   where
     RedCmdListNil: "A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>[],s\<rangle> [\<rightarrow>] s"
   | RedCmdListCons: "\<lbrakk> A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>c,s\<rangle> \<rightarrow> s''; A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>cs,s''\<rangle> [\<rightarrow>] s' \<rbrakk> \<Longrightarrow> 
@@ -589,9 +589,9 @@ subsection \<open>CFG reduction (small-step semantics)\<close>
 
 type_synonym 'a cfg_config = "(node+unit) \<times> 'a state"
 
-inductive red_cfg :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
+inductive red_cfg :: "'a absval_ty_fun \<Rightarrow> mbodyCFG proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
   ("_,_,_,_,_,_ \<turnstile> (_ -n\<rightarrow>/ _)" [51,0,0,0] 81)
-  for A :: "'a absval_ty_fun" and M :: proc_context and \<Lambda> :: var_context and \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env and G :: mbodyCFG
+  for A :: "'a absval_ty_fun" and M :: "mbodyCFG proc_context" and \<Lambda> :: var_context and \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env and G :: mbodyCFG
   where
     RedNormalSucc: "\<lbrakk>node_to_block(G) ! n = cs; A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>cs,Normal ns\<rangle> [\<rightarrow>] Normal ns'; List.member (out_edges(G) ! n) n'  \<rbrakk> \<Longrightarrow> 
               A,M,\<Lambda>,\<Gamma>,\<Omega>,G  \<turnstile> (Inl n, Normal ns) -n\<rightarrow> (Inl n', Normal ns')"
@@ -611,13 +611,13 @@ inductive_cases RedNormalSucc_case: "A,M,\<Lambda>,\<Gamma>,G,\<Omega>  \<turnst
 
 text \<open>Reflexive and transitive closure of CFG reduction\<close>
 
-abbreviation red_cfg_multi :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
+abbreviation red_cfg_multi :: "'a absval_ty_fun \<Rightarrow> mbodyCFG proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
   ("_,_,_,_,_,_ \<turnstile>_ -n\<rightarrow>*/ _" [51,0,0,0] 81)
   where "red_cfg_multi A M \<Lambda> \<Gamma> \<Omega> G \<equiv> rtranclp (red_cfg A M \<Lambda> \<Gamma> \<Omega> G)"
 
 text \<open>N-step CFG reduction\<close>
 
-abbreviation red_cfg_k_step :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> nat \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
+abbreviation red_cfg_k_step :: "'a absval_ty_fun \<Rightarrow> mbodyCFG proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> mbodyCFG \<Rightarrow> 'a cfg_config \<Rightarrow> nat \<Rightarrow> 'a cfg_config \<Rightarrow> bool"
   ("_,_,_,_,_,_ \<turnstile>_ -n\<rightarrow>^_/ _" [51,0,0,0,0] 81)
 where "red_cfg_k_step A M \<Lambda> \<Gamma> \<Omega> G c1 n c2 \<equiv> ((red_cfg A M \<Lambda> \<Gamma> \<Omega> G)^^n) c1 c2"
 
@@ -682,7 +682,7 @@ definition valid_configuration
          s' \<noteq> Failure \<and> 
          (is_final_config (m',s') \<longrightarrow> (\<forall>ns'. s' = Normal ns' \<longrightarrow> expr_all_sat A \<Lambda> \<Gamma> \<Omega> ns' posts))"
 
-definition proc_body_satisfies_spec :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> expr list \<Rightarrow> expr list \<Rightarrow> mbodyCFG \<Rightarrow> 'a nstate \<Rightarrow> bool"
+definition proc_body_satisfies_spec :: "'a absval_ty_fun \<Rightarrow> mbodyCFG proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> expr list \<Rightarrow> expr list \<Rightarrow> mbodyCFG \<Rightarrow> 'a nstate \<Rightarrow> bool"
   where "proc_body_satisfies_spec A M \<Lambda> \<Gamma> \<Omega> pres posts mbody ns \<equiv>
          expr_all_sat A \<Lambda> \<Gamma> \<Omega> ns pres \<longrightarrow> 
           (\<forall> m' s'. (A, M, \<Lambda>, \<Gamma>, \<Omega>, mbody \<turnstile> (Inl (entry(mbody)), Normal ns) -n\<rightarrow>* (m',s')) \<longrightarrow> 
@@ -707,6 +707,42 @@ abbreviation axiom_assm
   where "axiom_assm A \<Gamma> consts ns axioms \<equiv> 
      (axioms_sat A (consts, []) \<Gamma> (nstate_global_restriction ns consts) axioms)"
 
+text \<open>The following condition specifies what must hold for the list of constants with a unique modifier.
+      The condition states that all corresponding values in the state must be distinct. Note that constants
+      without unique modifiers may have values that clash with unique constants, which is consistent with the 
+      verification condition generated by Boogie (status 21.10.2023).
+      Note that the verification condition only forces distinctness between values of unique constants of 
+      the \<^emph>\<open>same\<close> type. Here, we force distinctness between values of all unique constants. These two
+      definitions are equivalent, since values of different types are distinct in Boogie by default
+      (every value can have only one type as reflected by the function \<^const>\<open>type_of_val\<close>).\<close>
+
+definition unique_constants_distinct :: "'a named_state \<Rightarrow> vname list \<Rightarrow> bool"
+  where "unique_constants_distinct ns xs \<longleftrightarrow> distinct (map (\<lambda>x. the (ns x)) xs)"
+
+fun proc_is_correct :: "'a absval_ty_fun \<Rightarrow> fdecls \<Rightarrow> vdecls \<Rightarrow> vname list \<Rightarrow> vdecls \<Rightarrow> axiom list \<Rightarrow> 'struct_ty2 procedure \<Rightarrow> 
+                       ('a absval_ty_fun \<Rightarrow> 'struct_ty proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> expr list \<Rightarrow> expr list \<Rightarrow> 'struct_ty2 \<Rightarrow> 'a nstate \<Rightarrow> bool) \<Rightarrow> 
+                         bool"
+  where 
+    "proc_is_correct A fun_decls constants unique_consts global_vars axioms proc proc_body_satisfies_spec_general =  
+      (case proc_body(proc) of
+        Some (locals, struct) \<Rightarrow> 
+          ( ( (\<forall>t. closed t \<longrightarrow> (\<exists>v. type_of_val A (v :: 'a val) = t)) \<and> (\<forall>v. closed ((type_of_val A) v)) ) \<longrightarrow>
+          (\<forall> \<Gamma>. fun_interp_wf A fun_decls \<Gamma> \<longrightarrow>
+          (
+             (\<forall>\<Omega> gs ls. (list_all closed \<Omega> \<and> length \<Omega> = proc_ty_args proc) \<longrightarrow>        
+             (state_typ_wf A \<Omega> gs (constants @ global_vars) \<longrightarrow>
+              state_typ_wf A \<Omega> ls ((proc_args proc)@ (locals @ proc_rets proc)) \<longrightarrow>
+              unique_constants_distinct gs unique_consts \<longrightarrow>
+              (axioms_sat A (constants, []) \<Gamma> (global_to_nstate (state_restriction gs constants)) axioms) \<longrightarrow>            
+              (proc_body_satisfies_spec_general 
+                                        A [] (constants@global_vars, (proc_args proc)@(locals@(proc_rets proc))) \<Gamma> \<Omega> 
+                                       (proc_all_pres proc) (proc_checked_posts proc) struct
+                                       \<lparr>old_global_state = gs, global_state = gs, local_state = ls, binder_state = Map.empty\<rparr> ) )
+            )
+          )))
+      | None \<Rightarrow> True)"
+
+(*
 fun proc_is_correct :: "'a absval_ty_fun \<Rightarrow> fdecls \<Rightarrow> vdecls \<Rightarrow> vdecls \<Rightarrow> axiom list \<Rightarrow> procedure \<Rightarrow> bool"
   where 
     "proc_is_correct A fun_decls constants global_vars axioms proc =
@@ -725,18 +761,21 @@ fun proc_is_correct :: "'a absval_ty_fun \<Rightarrow> fdecls \<Rightarrow> vdec
             )
           )))
       | None \<Rightarrow> True)"
+*)
 
-text \<open>\<^term>\<open>proc_is_correct A fun_decls constants global_vars axioms proc\<close> gives the definition
+text \<open>\<^term>\<open>proc_is_correct A fun_decls constants unique_consts global_vars axioms proc proc_body_satisfies_spec_general\<close> gives the definition
 that a procedure \<^term>\<open>proc\<close> is correct w.r.t. the type interpretation \<^term>\<open>A\<close> the function declarations \<open>fun_decls\<close>, 
 constants \<^term>\<open>constants\<close>, global variables \<^term>\<open>global_vars\<close> and Boogie axioms \<^term>\<open>axioms\<close>. 
+\<^term>\<open>unique_consts\<close> denotes the list of constants with a unique modifier.
 
 Since the current proof generation does not support procedure calls yet, we just instantiate the
 procedure context to the empty list here. 
 
-In our certificates, we prove (\<^term>\<open>\<And>A. proc_is_correct A fun_decls constants global_vars axioms proc\<close>),
-i.e., we prove procedure correctness for every type interpretation (\<And> is a universal quantifier at 
+In our certificates, we prove 
+\<^prop>\<open>\<And>A. proc_is_correct A fun_decls constants unique_consts global_vars axioms proc proc_body_satisfies_spec_general\<close>.
+That is, we prove procedure correctness for every type interpretation (\<And> is a universal quantifier at 
 the meta level). Note that for certain type interpretations procedure correctness is trivial (see
-the definition of \<^term>\<open>proc_is_correct\<close>).
+the definition of \<^const>\<open>proc_is_correct\<close>).
 \<close>
 
 subsection \<open>Properties of the semantics\<close>

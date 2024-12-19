@@ -13,7 +13,9 @@ fun assm_full_simp_solved_tac ctxt = (asm_full_simp_tac ctxt |> SOLVED')
 fun assm_full_simp_solved_with_thms_tac thms ctxt = (asm_full_simp_tac (add_simps thms ctxt) |> SOLVED')
 
 fun fastforce_tac ctxt thms = Clasimp.fast_force_tac (add_simps thms ctxt)
-\<close>                                     
+
+fun simp_only_tac thms ctxt = asm_full_simp_tac (add_simps thms (Simplifier.clear_simpset ctxt))
+\<close>                         
 
 ML 
 \<open>

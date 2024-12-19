@@ -94,31 +94,31 @@ CFG of a procedure body is represented by:
 
 text \<open>Procedure pre- and postconditions contain a boolean to indicate whether they are free (true) or 
       checked (false).\<close>
-record procedure =
+record 'struct_ty procedure =
   proc_ty_args :: nat
   proc_args :: vdecls
   proc_rets :: vdecls
   proc_modifs :: "vname list"
   proc_pres :: "(expr \<times> bool) list" 
   proc_posts :: "(expr \<times> bool) list"
-  proc_body :: "(vdecls \<times> mbodyCFG) option"
+  proc_body :: "(vdecls \<times> 'struct_ty) option"
 
-fun proc_checked_pres :: "procedure \<Rightarrow> expr list"
+fun proc_checked_pres :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_checked_pres p = map fst (filter (\<lambda>x. \<not> snd(x)) (proc_pres p))"
 
-fun proc_free_pres :: "procedure \<Rightarrow> expr list"
+fun proc_free_pres :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_free_pres p = map fst (filter (\<lambda>x. snd(x)) (proc_pres p))"
 
-fun proc_all_pres :: "procedure \<Rightarrow> expr list"
+fun proc_all_pres :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_all_pres p = map fst (proc_pres p)"
 
-fun proc_checked_posts :: "procedure \<Rightarrow> expr list"
+fun proc_checked_posts :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_checked_posts p = map fst (filter (\<lambda>x. \<not> snd(x)) (proc_posts p))"
 
-fun proc_all_posts :: "procedure \<Rightarrow> expr list"
+fun proc_all_posts :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_all_posts p = map fst (proc_posts p)"
 
-fun proc_free_posts :: "procedure \<Rightarrow> expr list"
+fun proc_free_posts :: "'struct_ty procedure \<Rightarrow> expr list"
   where "proc_free_posts p = map fst (filter (\<lambda>x. snd(x)) (proc_posts p))"
 
 definition exprs_to_only_checked_spec :: "expr list \<Rightarrow> (expr \<times> bool) list"
@@ -135,18 +135,18 @@ lemma exprs_to_only_checked_spec_2: "es = map fst (filter (\<lambda>x. \<not> sn
   unfolding exprs_to_only_checked_spec_def
   by (induction es) auto
 
-type_synonym pdecl = "pname \<times> procedure"
+type_synonym 'struct_ty pdecl = "pname \<times> 'struct_ty procedure"
 
 text \<open>An axiom is a boolean expression that can refer to constants.\<close>
 type_synonym axiom = expr
 
-record prog =
+record 'struct_ty prog =
   prog_ty_constr :: tdecls 
   prog_funcs :: fdecls
   prog_consts :: vdecls
   prog_globals :: vdecls
   prog_axioms :: "axiom list"
-  prog_procs :: "pdecl list"
+  prog_procs :: "'struct_ty pdecl list"
 
 text \<open>Type declarations are ignored by the semantics (all possible types are taken into account, which
 is more general and the resulting semantics can be reduced to the case where one only quantifies over 

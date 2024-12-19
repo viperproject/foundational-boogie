@@ -375,6 +375,14 @@ lemma lookup_var_global_no_locals: "lookup_var (G,[]) n_s x = global_state n_s x
   unfolding lookup_var_def
   by simp
 
+lemma globals_locals_helper:
+  assumes "\<forall> a. a \<in> A \<longrightarrow> a \<le> a_max"
+      and "\<forall> b. b \<in> B \<longrightarrow> b_min \<le> (b :: vname)"
+      and "a_max < b_min"
+    shows "A \<inter> B = {}"
+  using assms
+  by fastforce
+
 lemma map_of_append:
 "map_of (xs1) x = Some y \<Longrightarrow> map_of (xs1@xs2) x = Some y"
   by simp
@@ -385,13 +393,13 @@ lemma update_var_same_state:
   using assms update_var_def lookup_var_def
 proof (cases "map_of (snd \<Lambda>) x")
   case None
-  hence update_global:"?ns' = ns\<lparr>global_state := global_state(ns)(x \<mapsto> v)\<rparr>"
+  hence update_global:"?ns' = ns\<lparr>global_state := (global_state(ns))(x \<mapsto> v)\<rparr>"
     by (simp add: update_var_def)
 
   from assms have global_ns:"global_state ns x = Some v"
     by (metis None lookup_var_global prod.collapse)
 
-  have "global_state(ns)(x \<mapsto> v) = global_state ns"
+  have "(global_state(ns))(x \<mapsto> v) = global_state ns"
     apply (rule HOL.ext)
     by (simp add: global_ns)
   then show ?thesis 
@@ -399,13 +407,13 @@ proof (cases "map_of (snd \<Lambda>) x")
     by simp
 next
   case (Some a)
-  hence update_local:"?ns' = ns\<lparr>local_state := local_state(ns)(x \<mapsto> v)\<rparr>"
+  hence update_local:"?ns' = ns\<lparr>local_state := (local_state(ns))(x \<mapsto> v)\<rparr>"
     by (simp add: update_var_def)
 
   from assms have local_ns:"local_state ns x = Some v"
     by (metis Some lookup_var_local prod.collapse)
 
-  have "local_state(ns)(x \<mapsto> v) = local_state ns"
+  have "(local_state(ns))(x \<mapsto> v) = local_state ns"
     apply (rule HOL.ext)
     by (simp add: local_ns)
   then show ?thesis 

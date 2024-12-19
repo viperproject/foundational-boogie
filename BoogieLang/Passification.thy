@@ -27,7 +27,7 @@ lemma dependent_ext:
   unfolding dependent_def
   by blast
 
-definition set_red_cmd :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd \<Rightarrow> 'a nstate set \<Rightarrow> 'a state set"
+definition set_red_cmd :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> cmd \<Rightarrow> 'a nstate set \<Rightarrow> 'a state set"
   where "set_red_cmd A M \<Lambda> \<Gamma> \<Omega> c N = {s. \<exists>n_s. n_s \<in> N \<and> A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>c, Normal n_s\<rangle> \<rightarrow> s}"
 
 text \<open>\<^term>\<open>set_red_cmd\<close> lifts the command reduction to the reduction of a a set of input states \<close>
@@ -1211,7 +1211,7 @@ definition passive_block_conclusion
   where "passive_block_conclusion A M \<Lambda> \<Lambda>' \<Gamma> \<Omega> U0 D1 R R_old cs2 s' = 
   (s' \<noteq> Magic \<longrightarrow> (\<exists> U1 \<subseteq> U0. U1 \<noteq> {} \<and> dependent A \<Lambda>' \<Omega> U1 D1 \<and> passive_sim A M \<Lambda> \<Lambda>' \<Gamma> \<Omega> cs2 s' R R_old U1))"
 
-definition passive_lemma_assms :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> var_context \<Rightarrow> 
+definition passive_lemma_assms :: "'a absval_ty_fun \<Rightarrow> 'struct_ty proc_context \<Rightarrow> var_context \<Rightarrow> var_context \<Rightarrow> 
                    'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> vname list \<Rightarrow> passive_rel \<Rightarrow> passive_rel \<Rightarrow> 
                   ('a nstate) set \<Rightarrow> vname set \<Rightarrow> 'a nstate \<Rightarrow> bool"
   where "passive_lemma_assms A M \<Lambda> \<Lambda>' \<Gamma> \<Omega> W R R_old U0 D0 ns = 
@@ -1254,7 +1254,7 @@ definition passive_sim_cfg_fail
 definition dependent_2
   where "dependent_2 A \<Lambda>' \<Omega> U0 m = dependent A \<Lambda>' \<Omega> U0 {y. y \<le> m}"
 
-definition passive_lemma_assms_2 :: "'a absval_ty_fun \<Rightarrow> proc_context \<Rightarrow> var_context \<Rightarrow> var_context \<Rightarrow> 
+definition passive_lemma_assms_2 :: "'a absval_ty_fun \<Rightarrow> 'struct_ty proc_context \<Rightarrow> var_context \<Rightarrow> var_context \<Rightarrow> 
                    'a fun_interp \<Rightarrow> rtype_env \<Rightarrow> vname \<Rightarrow> passive_rel \<Rightarrow> passive_rel \<Rightarrow> 
                   ('a nstate) set \<Rightarrow> vname set \<Rightarrow> 'a nstate \<Rightarrow> bool"
   where "passive_lemma_assms_2 A M \<Lambda> \<Lambda>' \<Gamma> \<Omega> w_min R R_old U0 D0 ns = 
