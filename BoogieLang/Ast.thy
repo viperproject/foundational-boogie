@@ -5,7 +5,7 @@ theory Ast
 
 begin
 
-subsection \<open>Defining the AST and how to step through it. An AST is list of \<^term>\<open>bigblock\<close> .\<close>
+subsection \<open>AST definition\<close>
 
 type_synonym name = string
 type_synonym label = string
@@ -25,9 +25,15 @@ datatype parsed_structured_cmd
 and bigblock 
  = BigBlock "name option" "cmd list" "parsed_structured_cmd option" "transfer_cmd option"
 
+
+text \<open>A Boogie statement represented as an AST is a list of \<^typ>\<open>bigblock\<close>\<close>
+
 type_synonym ast = "bigblock list"
 
-text \<open>continuations; used for formalizing Gotos and numbered Breaks\<close>
+subsection \<open>AST semantics\<close>
+
+text \<open>We define a continuation-based small-step semantics.\<close>
+
 datatype cont 
  = KStop 
  | KSeq "bigblock" cont
@@ -81,8 +87,8 @@ fun is_final :: "'a ast_config \<Rightarrow> bool"
     "is_final ((BigBlock bb_name [] None None), KStop, s1) = True"
   | "is_final other = False"
 
-text\<open>function defining the semantics of bigblocks; small-step semantics 
-      Note: arrow symbols in the 'syntactic sugar' clash if the exact same syntax is used as in red_cmd\<close>
+text \<open>Small-step semantics\<close>
+
 inductive red_bigblock :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Rightarrow> var_context \<Rightarrow> 'a fun_interp \<Rightarrow> rtype_env  \<Rightarrow> ast \<Rightarrow> 'a ast_config \<Rightarrow> 'a ast_config \<Rightarrow> bool" 
   ("_,_,_,_,_,_ \<turnstile> (\<langle>_\<rangle> \<longrightarrow>/ _)" [51,0,0,0] 81)
   for A :: "'a absval_ty_fun" and M :: "'m proc_context" and \<Lambda> :: var_context and \<Gamma> :: "'a fun_interp" and \<Omega> :: rtype_env and T :: ast

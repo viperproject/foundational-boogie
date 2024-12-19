@@ -714,7 +714,7 @@ text \<open>The following condition specifies what must hold for the list of con
       Note that the verification condition only forces distinctness between values of unique constants of 
       the \<^emph>\<open>same\<close> type. Here, we force distinctness between values of all unique constants. These two
       definitions are equivalent, since values of different types are distinct in Boogie by default
-      (every value can have only one type as reflected by the function \<^term>\<open>type_of_val\<close>).\<close>
+      (every value can have only one type as reflected by the function \<^const>\<open>type_of_val\<close>).\<close>
 
 definition unique_constants_distinct :: "'a named_state \<Rightarrow> vname list \<Rightarrow> bool"
   where "unique_constants_distinct ns xs \<longleftrightarrow> distinct (map (\<lambda>x. the (ns x)) xs)"
@@ -771,10 +771,11 @@ constants \<^term>\<open>constants\<close>, global variables \<^term>\<open>glob
 Since the current proof generation does not support procedure calls yet, we just instantiate the
 procedure context to the empty list here. 
 
-In our certificates, we prove (\<^term>\<open>\<And>A. proc_is_correct A fun_decls constants unique_consts global_vars axioms proc proc_body_satisfies_spec_general\<close>),
-i.e., we prove procedure correctness for every type interpretation (\<And> is a universal quantifier at 
+In our certificates, we prove 
+\<^prop>\<open>\<And>A. proc_is_correct A fun_decls constants unique_consts global_vars axioms proc proc_body_satisfies_spec_general\<close>.
+That is, we prove procedure correctness for every type interpretation (\<And> is a universal quantifier at 
 the meta level). Note that for certain type interpretations procedure correctness is trivial (see
-the definition of \<^term>\<open>proc_is_correct\<close>).
+the definition of \<^const>\<open>proc_is_correct\<close>).
 \<close>
 
 subsection \<open>Properties of the semantics\<close>
