@@ -118,7 +118,7 @@ lemma loop_global_block_subset:
   unfolding global_block_lemma_loop_def
   by blast
 
-lemma normal_target_verfies_show_hybrid_verifies:
+lemma normal_target_verifies_show_hybrid_verifies:
   assumes TargetVerifies: "\<forall>m1' s1'. (A,M,\<Lambda>,\<Gamma>,\<Omega>,G' \<turnstile>(Inl tgt_block, Normal ns) -n\<rightarrow>* (m1', s1')) \<longrightarrow> valid_configuration A \<Lambda> \<Gamma> \<Omega> posts m1' s1'"
       and TgtCmds: "node_to_block G' ! tgt_block = tgt_cmds"
     shows "hybrid_block_lemma_target_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block tgt_cmds ns posts"
@@ -664,7 +664,7 @@ proof (rule allI | rule impI)+
           hence mSteps: "A,M,\<Lambda>,\<Gamma>,\<Omega>,G \<turnstile>(Inl succ, Normal ns') -n\<rightarrow>^m (m', s')"
             using "2"(3) local.RedNormalSucc(1) local.RedNormalSucc(2) by blast
           have "hybrid_block_lemma_target_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block tgt_cmds ns posts"
-            apply (rule normal_target_verfies_show_hybrid_verifies)
+            apply (rule normal_target_verifies_show_hybrid_verifies)
             using less.prems(1) apply blast
             by (simp add: TgtCmds)
 
