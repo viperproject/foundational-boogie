@@ -3,7 +3,7 @@ theory CFGOptimizationsLoop
 begin
 
 definition hybrid_block_lemma_target_succ_verifies
-  where "hybrid_block_lemma_target_succ_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block s1' posts\<equiv>
+  where "hybrid_block_lemma_target_succ_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block s1' posts \<equiv>
          (\<forall>ns1'. s1' = Normal ns1' \<longrightarrow>
                      (\<forall>target_succ. List.member (out_edges(G') ! tgt_block) target_succ \<longrightarrow>
                           (\<forall>m2' s2'. (A,M,\<Lambda>,\<Gamma>,\<Omega>,G' \<turnstile> (Inl target_succ, (Normal  ns1')) -n\<rightarrow>* (m2', s2')) \<longrightarrow>
@@ -12,10 +12,10 @@ definition hybrid_block_lemma_target_succ_verifies
                    )"
 
 definition hybrid_block_lemma_target_verifies
-  where "hybrid_block_lemma_target_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block tgt_cmds ns posts\<equiv>              
+  where "hybrid_block_lemma_target_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block tgt_cmds ns posts \<equiv>              
             (\<forall>s1'. (A,M,\<Lambda>,\<Gamma>,\<Omega> \<turnstile> \<langle>tgt_cmds, Normal ns\<rangle> [\<rightarrow>] s1') \<longrightarrow>  \<comment>\<open>First reduce the coalesced commands\<close>
                    (if (out_edges(G') ! tgt_block = []) then valid_configuration A \<Lambda> \<Gamma> \<Omega> posts (Inr()) s1' else s1' \<noteq> Failure) \<and> 
-                   \<comment>\<open>All successors blocks of \<^term>\<open>tgt_block\<close> must verify\<close>
+                   \<comment>\<open>All successor blocks of \<^term>\<open>tgt_block\<close> must verify\<close>
                    hybrid_block_lemma_target_succ_verifies A M \<Lambda> \<Gamma> \<Omega> G' tgt_block s1' posts
               )"
 
@@ -307,8 +307,8 @@ subsubsection \<open>Main Lemma 1: Shows that the Loop Global Block Lemma holds 
 
 lemma loopBlock_global_block:
   assumes SuccBlocks: "out_edges G ! src_block = ls"
-      and GlobalBlockSucc: "\<forall>x\<in>set(ls).(\<exists>lsSubsetList. lsSubsetList\<subseteq>lsLoopHead \<and> global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f(x)) lsSubsetList posts) \<or> (\<exists>(LoopHead, LoopHead')\<in>lsLoopHead. (x = LoopHead \<and> f(x) = LoopHead'))"
-      and FunctionCorr: "\<forall>x\<in>set(ls). f(x)\<in>set(out_edges G' ! tgt_block)"
+      and GlobalBlockSucc: "\<forall>x\<in>set(ls).(\<exists>lsSubsetList. lsSubsetList\<subseteq>lsLoopHead \<and> global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f x) lsSubsetList posts) \<or> (\<exists>(LoopHead, LoopHead')\<in>lsLoopHead. (x = LoopHead \<and> f x = LoopHead'))"
+      and FunctionCorr: "\<forall>x\<in>set(ls). f x \<in> set(out_edges G' ! tgt_block)"
       and TargetBlock: "node_to_block G' ! tgt_block = tgt_cmds"
       and SourceBlock: "node_to_block G ! src_block = src_cmds"
       and NotCoalesced: "tgt_cmds = src_cmds"
@@ -431,9 +431,9 @@ lemma loopHead_global_block:
   assumes SuccBlocks: "out_edges G ! src_block = ls" 
       and GlobalBlockSucc: 
            "\<forall>x\<in>set(ls). ( \<exists>lsSubsetList. lsSubsetList\<subseteq>(lsLoopHead \<union> {(src_block,tgt_block)}) \<and> 
-                          global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f(x)) lsSubsetList posts ) 
-                      \<or> (\<exists>(LoopHead, LoopHead')\<in>(lsLoopHead\<union>{(src_block,tgt_block)}). (x = LoopHead \<and> f(x) = LoopHead'))"
-      and FunctionCorr: "\<forall>x\<in>set(ls). f(x)\<in>set(out_edges G' ! tgt_block)"
+                          global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f x) lsSubsetList posts ) 
+                      \<or> (\<exists>(LoopHead, LoopHead')\<in>(lsLoopHead\<union>{(src_block,tgt_block)}). (x = LoopHead \<and> f x = LoopHead'))"
+      and FunctionCorr: "\<forall>x\<in>set(ls). f x \<in> set(out_edges G' ! tgt_block)"
       and TargetBlock: "node_to_block G' ! tgt_block = tgt_cmds"
       and SourceBlock: "node_to_block G ! src_block = src_cmds"
       and NotCoalesced: "tgt_cmds = src_cmds"
@@ -726,9 +726,9 @@ lemma loopBlock_global_block_hybrid:
   assumes SuccBlocks: "out_edges G ! src_block = ls" 
       and GlobalBlockSucc: 
             "\<forall>x\<in>set(ls).
-               (\<exists>lsSubsetList. lsSubsetList\<subseteq>lsLoopHead \<and> global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f(x)) lsSubsetList posts) 
-             \<or> (\<exists>(LoopHead, LoopHead')\<in>lsLoopHead. (x = LoopHead \<and> f(x) = LoopHead'))"
-      and FunctionCorr: "\<forall>x\<in>set(ls). f(x)\<in>set(out_edges G' ! tgt_block)"
+               (\<exists>lsSubsetList. lsSubsetList\<subseteq>lsLoopHead \<and> global_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' x (f x) lsSubsetList posts) 
+             \<or> (\<exists>(LoopHead, LoopHead')\<in>lsLoopHead. (x = LoopHead \<and> f x = LoopHead'))"
+      and FunctionCorr: "\<forall>x\<in>set(ls). f x \<in> set (out_edges G' ! tgt_block)"
       and SourceBlock: "node_to_block G ! src_block = src_cmds"
       and NoSuccEq: "ls = [] \<Longrightarrow> out_edges G' ! tgt_block = []"
     shows "hybrid_block_lemma_loop A M \<Lambda> \<Gamma> \<Omega> G G' src_block tgt_block src_cmds lsLoopHead posts"
