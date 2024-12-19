@@ -16,6 +16,6 @@ session Boogie_Lang = "HOL" +
     PassificationEndToEnd
     PassificationML
     BackedgeElim
+    CFGOptimizationsLoop	
     Ast
     Ast_Cfg_Transformation
-    CFGOptimizationsLoop
