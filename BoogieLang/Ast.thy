@@ -92,7 +92,6 @@ inductive red_bigblock :: "'a absval_ty_fun \<Rightarrow> 'm proc_context \<Righ
       \<Longrightarrow> A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> \<langle>((BigBlock bb_name cs str_cmd tr_cmd), cont0, Normal n_s)\<rangle> \<longrightarrow> 
                               ((BigBlock bb_name [] str_cmd tr_cmd), cont0, s1)"  
 
-  (* TODO: think about this again! *)
   | RedFailure_or_Magic: 
     "\<lbrakk> (s1 = Magic) \<or> (s1 = Failure); \<not> (is_final ((BigBlock bb_name [] str_cmd tr_cmd), cont0, s1))  \<rbrakk> 
       \<Longrightarrow> A,M,\<Lambda>,\<Gamma>,\<Omega>,T \<turnstile> \<langle>((BigBlock bb_name [] str_cmd tr_cmd), cont0, s1)\<rangle> \<longrightarrow> 
